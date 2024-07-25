@@ -12,8 +12,8 @@ const SkateDesignTool = () => {
 
   useEffect(() => {
     const initCanvas = new fabric.Canvas(canvasRef.current, {
-      height: 600,
-      width: 800,
+      height: 800,
+      width: 1000,
       backgroundColor: 'white',
     });
     setCanvas(initCanvas);
@@ -24,9 +24,10 @@ const SkateDesignTool = () => {
 
   const loadImage = (url, setter, options = {}) => {
     fabric.Image.fromURL(url, (img) => {
+      img.scale(0.7); // Scale image to 70%
       img.set({
-        left: canvas.width / 2 - img.width / 2,
-        top: canvas.height / 2 - img.height / 2,
+        left: canvas.width / 2 - img.getScaledWidth() / 2,
+        top: canvas.height / 2 - img.getScaledHeight() / 2,
         ...options,
       });
       setter(img);
@@ -48,21 +49,30 @@ const SkateDesignTool = () => {
   const handleWheelsChange = (url) => {
     wheelsImages.forEach(img => canvas.remove(img));
     const wheelPositions = [
-      { left: 180, top: 430 },
-      { left: 280, top: 430 },
-      { left: 380, top: 430 },
-      { left: 480, top: 430 },
+      { left: 180, top: 630 },
+      { left: 280, top: 630 },
+      { left: 380, top: 630 },
+      { left: 480, top: 630 },
     ];
     const newWheels = [];
     wheelPositions.forEach((pos) => {
       loadImage(url, (img) => {
         img.set(pos);
-        img.scale(0.5);
+        img.scale(0.35); // Scale wheels to 35%
         newWheels.push(img);
         canvas.sendToBack(img);
       });
     });
     setWheelsImages(newWheels);
+  };
+
+  const handleResize = (scale) => {
+    if (canvas) {
+      canvas.setZoom(scale);
+      canvas.setWidth(1000 * scale);
+      canvas.setHeight(800 * scale);
+      canvas.renderAll();
+    }
   };
 
   const handleReset = () => {
@@ -88,6 +98,12 @@ const SkateDesignTool = () => {
         
         <h2>Wheels</h2>
         <button onClick={() => handleWheelsChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`)}>Load Dead Wheels</button>
+
+        <h2>Resize</h2>
+        <button onClick={() => handleResize(0.25)}>25%</button>
+        <button onClick={() => handleResize(0.5)}>50%</button>
+        <button onClick={() => handleResize(0.75)}>75%</button>
+        <button onClick={() => handleResize(1)}>100%</button>
 
         <button onClick={handleReset}>Reset</button>
       </div>
