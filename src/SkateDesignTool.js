@@ -39,18 +39,19 @@ const SkateDesignTool = () => {
 
   const handleLoadUSD = () => {
     canvas.clear();
-    loadImage(process.env.PUBLIC_URL + '/images/usd_aeon.png');
+    loadImage(`${process.env.PUBLIC_URL}/images/usd_aeon.png`);
   };
 
   const handleLoadRoces = () => {
     canvas.clear();
-    loadImage(process.env.PUBLIC_URL + '/images/roces_m12.png');
+    loadImage(`${process.env.PUBLIC_URL}/images/roces_m12.png`);
   };
 
   return (
     <div className="skate-design-tool">
       <canvas ref={canvasRef}></canvas>
       <div className="controls">
+        <h2>Manufacturer</h2>
         <button onClick={handleLoadUSD}>Load USD Aeon</button>
         <button onClick={handleLoadRoces}>Load Roces M12</button>
         <input type="color" onChange={handleColorChange} />

@@ -12,3 +12,7 @@
 canvas {
   border: 1px solid #ccc;
 }
+
+.controls h2 {
+  margin-bottom: 10px;
+}
