@@ -19,12 +19,15 @@ const SkateDesignTool = () => {
     };
   }, []);
 
-  const loadImage = (url) => {
-    fabric.Image.fromURL(url, (img) => {
-      img.scaleToWidth(300);
-      img.scaleToHeight(300);
-      img.set({ left: 250, top: 150 });
-      canvas.add(img);
+  const loadImage = (urls) => {
+    canvas.clear();
+    urls.forEach(url => {
+      fabric.Image.fromURL(url, (img) => {
+        img.scaleToWidth(300);
+        img.scaleToHeight(300);
+        img.set({ left: canvas.width / 2 - img.getScaledWidth() / 2, top: canvas.height / 2 - img.getScaledHeight() / 2 });
+        canvas.add(img);
+      });
     });
   };
 
@@ -37,14 +40,12 @@ const SkateDesignTool = () => {
     }
   };
 
-  const handleLoadUSD = () => {
-    canvas.clear();
-    loadImage(`${process.env.PUBLIC_URL}/images/usd_aeon.png`);
+  const handleLoadUSDWhite = () => {
+    loadImage([`${process.env.PUBLIC_URL}/images/usd_aeon_white_1.webp`, `${process.env.PUBLIC_URL}/images/usd_aeon_white_2.webp`]);
   };
 
-  const handleLoadRoces = () => {
-    canvas.clear();
-    loadImage(`${process.env.PUBLIC_URL}/images/roces_m12.png`);
+  const handleLoadUSDYellow = () => {
+    loadImage([`${process.env.PUBLIC_URL}/images/usd_aeon_yellow_1.webp`, `${process.env.PUBLIC_URL}/images/usd_aeon_yellow_2.webp`]);
   };
 
   return (
@@ -52,8 +53,8 @@ const SkateDesignTool = () => {
       <canvas ref={canvasRef}></canvas>
       <div className="controls">
         <h2>Manufacturer</h2>
-        <button onClick={handleLoadUSD}>Load USD Aeon</button>
-        <button onClick={handleLoadRoces}>Load Roces M12</button>
+        <button onClick={handleLoadUSDWhite}>Load USD Aeon Basic Team White</button>
+        <button onClick={handleLoadUSDYellow}>Load USD Aeon Mery Munoz Pro II</button>
         <input type="color" onChange={handleColorChange} />
       </div>
     </div>
