@@ -8,7 +8,7 @@ const SkateDesignTool = () => {
   const [canvas, setCanvas] = useState(null);
   const [bootImage, setBootImage] = useState(null);
   const [frameImage, setFrameImage] = useState(null);
-  const [wheelsImages, setWheelsImages] = useState([]);
+  const [wheelsGroup, setWheelsGroup] = useState(null);
 
   useEffect(() => {
     const initCanvas = new fabric.Canvas(canvasRef.current, {
@@ -47,23 +47,26 @@ const SkateDesignTool = () => {
   };
 
   const handleWheelsChange = (url) => {
-    wheelsImages.forEach(img => canvas.remove(img));
+    if (wheelsGroup) canvas.remove(wheelsGroup);
     const wheelPositions = [
       { left: 180, top: 630 },
       { left: 280, top: 630 },
       { left: 380, top: 630 },
       { left: 480, top: 630 },
     ];
-    const newWheels = [];
-    wheelPositions.forEach((pos) => {
-      loadImage(url, (img) => {
-        img.set(pos);
-        img.scale(0.35); // Scale wheels to 35%
-        newWheels.push(img);
-        canvas.sendToBack(img);
+    const wheels = [];
+    wheelPositions.forEach((pos, index) => {
+      fabric.Image.fromURL(url, (img) => {
+        img.set({ ...pos, scaleX: 0.35, scaleY: 0.35 });
+        wheels.push(img);
+        if (wheels.length === wheelPositions.length) {
+          const group = new fabric.Group(wheels);
+          setWheelsGroup(group);
+          canvas.add(group);
+          canvas.renderAll();
+        }
       });
     });
-    setWheelsImages(newWheels);
   };
 
   const handleResize = (scale) => {
@@ -75,12 +78,23 @@ const SkateDesignTool = () => {
     }
   };
 
+  const handleLayerChange = (action) => {
+    if (!canvas.getActiveObject()) return;
+    const activeObject = canvas.getActiveObject();
+    if (action === 'bringToFront') {
+      canvas.bringToFront(activeObject);
+    } else if (action === 'sendToBack') {
+      canvas.sendToBack(activeObject);
+    }
+    canvas.renderAll();
+  };
+
   const handleReset = () => {
     canvas.backgroundColor = 'white';
     canvas.clear();
     setBootImage(null);
     setFrameImage(null);
-    setWheelsImages([]);
+    setWheelsGroup(null);
     canvas.renderAll();
   };
 
@@ -88,24 +102,50 @@ const SkateDesignTool = () => {
     <div className="skate-design-tool">
       <canvas ref={canvasRef}></canvas>
       <div className="controls">
-        <h2>Boot</h2>
-        <button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/USD Aeon Basic Team 60 Skates.png`)}>Load USD Aeon Basic Team White</button>
-        <button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/THEM SKATES X BACEMINT 909 Pink BOOT ONLY.png`)}>Load THEM Skates Bacethem</button>
-        <button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/Them-909-Skates-SHELL-ONLY-Black.png`)}>Load THEM Skates Black</button>
+        <div className="control-section">
+          <h2>Boot</h2>
+          <ul>
+            <li><button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/USD Aeon Basic Team 60 Skates.png`)}>USD Aeon Basic Team White</button></li>
+            <li><button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/THEM SKATES X BACEMINT 909 Pink BOOT ONLY.png`)}>THEM Skates Bacethem</button></li>
+            <li><button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/Them-909-Skates-SHELL-ONLY-Black.png`)}>THEM Skates Black</button></li>
+          </ul>
+        </div>
 
-        <h2>Frame</h2>
-        <button onClick={() => handleFrameChange(`${process.env.PUBLIC_URL}/images/Oysi Medium Chassis Black.png`)}>Load Oysi Frame</button>
-        
-        <h2>Wheels</h2>
-        <button onClick={() => handleWheelsChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`)}>Load Dead Wheels</button>
+        <div className="control-section">
+          <h2>Frame</h2>
+          <ul>
+            <li><button onClick={() => handleFrameChange(`${process.env.PUBLIC_URL}/images/Oysi Medium Chassis Black.png`)}>Oysi Frame</button></li>
+          </ul>
+        </div>
 
-        <h2>Resize</h2>
-        <button onClick={() => handleResize(0.25)}>25%</button>
-        <button onClick={() => handleResize(0.5)}>50%</button>
-        <button onClick={() => handleResize(0.75)}>75%</button>
-        <button onClick={() => handleResize(1)}>100%</button>
+        <div className="control-section">
+          <h2>Wheels</h2>
+          <ul>
+            <li><button onClick={() => handleWheelsChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`)}>Dead Wheels</button></li>
+          </ul>
+        </div>
 
-        <button onClick={handleReset}>Reset</button>
+        <div className="control-section">
+          <h2>Resize</h2>
+          <ul>
+            <li><button onClick={() => handleResize(0.25)}>25%</button></li>
+            <li><button onClick={() => handleResize(0.5)}>50%</button></li>
+            <li><button onClick={() => handleResize(0.75)}>75%</button></li>
+            <li><button onClick={() => handleResize(1)}>100%</button></li>
+          </ul>
+        </div>
+
+        <div className="control-section">
+          <h2>Layers</h2>
+          <ul>
+            <li><button onClick={() => handleLayerChange('bringToFront')}>Bring to Front</button></li>
+            <li><button onClick={() => handleLayerChange('sendToBack')}>Send to Back</button></li>
+          </ul>
+        </div>
+
+        <div className="control-section">
+          <button className="reset-button" onClick={handleReset}>Reset</button>
+        </div>
       </div>
     </div>
   );
