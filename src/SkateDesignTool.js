@@ -9,12 +9,20 @@ const SkateDesignTool = () => {
   const [bootImage, setBootImage] = useState(null);
   const [frameImage, setFrameImage] = useState(null);
   const [wheels, setWheels] = useState([]);
+  const [activeObject, setActiveObject] = useState(null);
+  const [showControls, setShowControls] = useState(true);
 
   useEffect(() => {
     const initCanvas = new fabric.Canvas(canvasRef.current, {
       height: 800,
       width: 1000,
       backgroundColor: 'white',
+    });
+    initCanvas.on('object:selected', () => {
+      setActiveObject(initCanvas.getActiveObject());
+    });
+    initCanvas.on('selection:cleared', () => {
+      setActiveObject(null);
     });
     setCanvas(initCanvas);
     return () => {
@@ -46,14 +54,16 @@ const SkateDesignTool = () => {
     loadImage(url, setFrameImage);
   };
 
-  const handleWheelsChange = (url) => {
+  const handleWheelsChange = (url, count) => {
     wheels.forEach(wheel => canvas.remove(wheel));
-    const wheelPositions = [
-      { left: 180, top: 630 },
-      { left: 280, top: 630 },
-      { left: 380, top: 630 },
-      { left: 480, top: 630 },
-    ];
+    const wheelPositions = count === 1 ? 
+      [{ left: canvas.width / 2 - 20, top: 630 }] : 
+      [
+        { left: 180, top: 630 },
+        { left: 280, top: 630 },
+        { left: 380, top: 630 },
+        { left: 480, top: 630 },
+      ];
     const newWheels = [];
     wheelPositions.forEach((pos) => {
       fabric.Image.fromURL(url, (img) => {
@@ -96,37 +106,47 @@ const SkateDesignTool = () => {
   return (
     <div className="skate-design-tool">
       <canvas ref={canvasRef}></canvas>
-      <div className="controls">
-        <div className="control-section">
-          <h2>Boot</h2>
-          <button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/USD Aeon Basic Team 60 Skates.png`)}>USD Aeon Basic Team White</button>
-          <button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/THEM SKATES X BACEMINT 909 Pink BOOT ONLY.png`)}>THEM Skates Bacethem</button>
-          <button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/Them-909-Skates-SHELL-ONLY-Black.png`)}>THEM Skates Black</button>
+      {showControls && (
+        <div className="controls">
+          <div className="control-section">
+            <h3>Boot</h3>
+            <button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/USD Aeon Basic Team 60 Skates.png`)}>USD Aeon Basic Team White</button>
+            <button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/THEM SKATES X BACEMINT 909 Pink BOOT ONLY.png`)}>THEM Skates Bacethem</button>
+            <button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/Them-909-Skates-SHELL-ONLY-Black.png`)}>THEM Skates Black</button>
+          </div>
+          <div className="control-section">
+            <h3>Frame</h3>
+            <button onClick={() => handleFrameChange(`${process.env.PUBLIC_URL}/images/Oysi Medium Chassis Black.png`)}>Oysi Frame</button>
+          </div>
+          <div className="control-section">
+            <h3>Wheels</h3>
+            <button onClick={() => handleWheelsChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`, 1)}>1 Wheel</button>
+            <button onClick={() => handleWheelsChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`, 4)}>4 Wheels</button>
+          </div>
+          <div className="control-section">
+            <h3>Resize</h3>
+            <button onClick={() => handleResize(0.25)}>25%</button>
+            <button onClick={() => handleResize(0.5)}>50%</button>
+            <button onClick={() => handleResize(0.75)}>75%</button>
+            <button onClick={() => handleResize(1)}>100%</button>
+          </div>
+          <div className="control-section">
+            <h3>Layers</h3>
+            <button onClick={() => handleLayerChange('bringToFront')}>Bring to Front</button>
+            <button onClick={() => handleLayerChange('sendToBack')}>Send to Back</button>
+          </div>
+          <div className="control-section">
+            <h3>Active Layer</h3>
+            <div>{activeObject ? activeObject.type : 'None'}</div>
+          </div>
+          <div className="control-section">
+            <button className="reset-button" onClick={handleReset}>Reset</button>
+          </div>
         </div>
-        <div className="control-section">
-          <h2>Frame</h2>
-          <button onClick={() => handleFrameChange(`${process.env.PUBLIC_URL}/images/Oysi Medium Chassis Black.png`)}>Oysi Frame</button>
-        </div>
-        <div className="control-section">
-          <h2>Wheels</h2>
-          <button onClick={() => handleWheelsChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`)}>Dead Wheels</button>
-        </div>
-        <div className="control-section">
-          <h2>Resize</h2>
-          <button onClick={() => handleResize(0.25)}>25%</button>
-          <button onClick={() => handleResize(0.5)}>50%</button>
-          <button onClick={() => handleResize(0.75)}>75%</button>
-          <button onClick={() => handleResize(1)}>100%</button>
-        </div>
-        <div className="control-section">
-          <h2>Layers</h2>
-          <button onClick={() => handleLayerChange('bringToFront')}>Bring to Front</button>
-          <button onClick={() => handleLayerChange('sendToBack')}>Send to Back</button>
-        </div>
-        <div className="control-section">
-          <button className="reset-button" onClick={handleReset}>Reset</button>
-        </div>
-      </div>
+      )}
+      <button className="toggle-controls-button" onClick={() => setShowControls(!showControls)}>
+        {showControls ? 'Hide Controls' : 'Show Controls'}
+      </button>
     </div>
   );
 };
