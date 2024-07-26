@@ -5,6 +5,23 @@
   align-items: center;
 }
 
+.header {
+  width: 100%;
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 24px;
+  font-family: 'Arial Black', Gadget, sans-serif;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
 .controls {
   display: flex;
   justify-content: space-around;
@@ -54,6 +71,10 @@
 
 .wheel-buttons button {
   margin: 0 5px;
+}
+
+.layer-controls button {
+  margin: 5px 0;
 }
 
 .reset-button {

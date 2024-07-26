@@ -94,6 +94,13 @@ const SkateDesignTool = () => {
     canvas.renderAll();
   };
 
+  const handleDelete = () => {
+    if (!canvas.getActiveObject()) return;
+    const activeObject = canvas.getActiveObject();
+    canvas.remove(activeObject);
+    setActiveObject(null);
+  };
+
   const handleReset = () => {
     canvas.backgroundColor = 'white';
     canvas.clear();
@@ -133,13 +140,15 @@ const SkateDesignTool = () => {
             <button onClick={() => handleResize(1)}>100%</button>
           </div>
           <div className="control-section">
-            <h3>Layers</h3>
-            <button onClick={() => handleLayerChange('bringToFront')}>Bring to Front</button>
-            <button onClick={() => handleLayerChange('sendToBack')}>Send to Back</button>
-          </div>
-          <div className="control-section">
             <h3>Active Layer</h3>
             <div>{activeObject ? activeObject.type : 'None'}</div>
+            {activeObject && (
+              <div className="layer-controls">
+                <button onClick={() => handleLayerChange('bringToFront')}>Bring to Front</button>
+                <button onClick={() => handleLayerChange('sendToBack')}>Send to Back</button>
+                <button onClick={handleDelete}>Delete</button>
+              </div>
+            )}
           </div>
           <div className="control-section">
             <button className="reset-button" onClick={handleReset}>Reset</button>
