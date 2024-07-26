@@ -121,7 +121,7 @@ const SkateDesignTool = () => {
           <div className="control-section">
             <h3>Wheels</h3>
             <button onClick={() => handleWheelsChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`, 1)}>1 Wheel</button>
-            <button onClick={() => handleWheelsChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`, 4)}>4 Wheels</button>
+            <button onClick={() => handleWheelsChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`, 4)}>4 Dead Wheels</button>
           </div>
           <div className="control-section">
             <h3>Resize</h3>
