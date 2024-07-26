@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { fabric } from 'fabric';
 import './SkateDesignTool.css';
@@ -39,6 +40,8 @@ const SkateDesignTool = () => {
       });
       setter(img);
       canvas.add(img);
+      canvas.setActiveObject(img);
+      setActiveObject(img);
       canvas.renderAll();
     });
   };
@@ -67,8 +70,8 @@ const SkateDesignTool = () => {
     wheelPositions.forEach((pos) => {
       fabric.Image.fromURL(url, (img) => {
         img.set({ ...pos, scaleX: 0.35, scaleY: 0.35 });
-        canvas.add(img);
         newWheels.push(img);
+        canvas.add(img);
         canvas.renderAll();
       });
     });
@@ -111,9 +114,6 @@ const SkateDesignTool = () => {
 
   return (
     <div className="skate-design-tool">
-      <header className="header">
-        <h1>Custom Skate Design Tool</h1>
-      </header>
       <canvas ref={canvasRef}></canvas>
       {showControls && (
         <div className="controls">
