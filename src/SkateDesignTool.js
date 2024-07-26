@@ -8,7 +8,7 @@ const SkateDesignTool = () => {
   const [canvas, setCanvas] = useState(null);
   const [bootImage, setBootImage] = useState(null);
   const [frameImage, setFrameImage] = useState(null);
-  const [wheelsGroup, setWheelsGroup] = useState(null);
+  const [wheels, setWheels] = useState([]);
 
   useEffect(() => {
     const initCanvas = new fabric.Canvas(canvasRef.current, {
@@ -47,26 +47,23 @@ const SkateDesignTool = () => {
   };
 
   const handleWheelsChange = (url) => {
-    if (wheelsGroup) canvas.remove(wheelsGroup);
+    wheels.forEach(wheel => canvas.remove(wheel));
     const wheelPositions = [
       { left: 180, top: 630 },
       { left: 280, top: 630 },
       { left: 380, top: 630 },
       { left: 480, top: 630 },
     ];
-    const wheels = [];
-    wheelPositions.forEach((pos, index) => {
+    const newWheels = [];
+    wheelPositions.forEach((pos) => {
       fabric.Image.fromURL(url, (img) => {
         img.set({ ...pos, scaleX: 0.35, scaleY: 0.35 });
-        wheels.push(img);
-        if (wheels.length === wheelPositions.length) {
-          const group = new fabric.Group(wheels);
-          setWheelsGroup(group);
-          canvas.add(group);
-          canvas.renderAll();
-        }
+        newWheels.push(img);
+        canvas.add(img);
+        canvas.renderAll();
       });
     });
+    setWheels(newWheels);
   };
 
   const handleResize = (scale) => {
@@ -94,7 +91,7 @@ const SkateDesignTool = () => {
     canvas.clear();
     setBootImage(null);
     setFrameImage(null);
-    setWheelsGroup(null);
+    setWheels([]);
     canvas.renderAll();
   };
 
@@ -102,50 +99,56 @@ const SkateDesignTool = () => {
     <div className="skate-design-tool">
       <canvas ref={canvasRef}></canvas>
       <div className="controls">
-        <div className="control-section">
-          <h2>Boot</h2>
-          <ul>
-            <li><button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/USD Aeon Basic Team 60 Skates.png`)}>USD Aeon Basic Team White</button></li>
-            <li><button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/THEM SKATES X BACEMINT 909 Pink BOOT ONLY.png`)}>THEM Skates Bacethem</button></li>
-            <li><button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/Them-909-Skates-SHELL-ONLY-Black.png`)}>THEM Skates Black</button></li>
-          </ul>
-        </div>
-
-        <div className="control-section">
-          <h2>Frame</h2>
-          <ul>
-            <li><button onClick={() => handleFrameChange(`${process.env.PUBLIC_URL}/images/Oysi Medium Chassis Black.png`)}>Oysi Frame</button></li>
-          </ul>
-        </div>
-
-        <div className="control-section">
-          <h2>Wheels</h2>
-          <ul>
-            <li><button onClick={() => handleWheelsChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`)}>Dead Wheels</button></li>
-          </ul>
-        </div>
-
-        <div className="control-section">
-          <h2>Resize</h2>
-          <ul>
-            <li><button onClick={() => handleResize(0.25)}>25%</button></li>
-            <li><button onClick={() => handleResize(0.5)}>50%</button></li>
-            <li><button onClick={() => handleResize(0.75)}>75%</button></li>
-            <li><button onClick={() => handleResize(1)}>100%</button></li>
-          </ul>
-        </div>
-
-        <div className="control-section">
-          <h2>Layers</h2>
-          <ul>
-            <li><button onClick={() => handleLayerChange('bringToFront')}>Bring to Front</button></li>
-            <li><button onClick={() => handleLayerChange('sendToBack')}>Send to Back</button></li>
-          </ul>
-        </div>
-
-        <div className="control-section">
-          <button className="reset-button" onClick={handleReset}>Reset</button>
-        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Boot</th>
+              <th>Frame</th>
+              <th>Wheels</th>
+              <th>Resize</th>
+              <th>Layers</th>
+              <th>Reset</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <ul>
+                  <li><input type="checkbox" onChange={() => handleBootChange(`${process.env.PUBLIC_URL}/images/USD Aeon Basic Team 60 Skates.png`)} />USD Aeon Basic Team White</li>
+                  <li><input type="checkbox" onChange={() => handleBootChange(`${process.env.PUBLIC_URL}/images/THEM SKATES X BACEMINT 909 Pink BOOT ONLY.png`)} />THEM Skates Bacethem</li>
+                  <li><input type="checkbox" onChange={() => handleBootChange(`${process.env.PUBLIC_URL}/images/Them-909-Skates-SHELL-ONLY-Black.png`)} />THEM Skates Black</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li><input type="checkbox" onChange={() => handleFrameChange(`${process.env.PUBLIC_URL}/images/Oysi Medium Chassis Black.png`)} />Oysi Frame</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li><input type="checkbox" onChange={() => handleWheelsChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`)} />Dead Wheels</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li><button onClick={() => handleResize(0.25)}>25%</button></li>
+                  <li><button onClick={() => handleResize(0.5)}>50%</button></li>
+                  <li><button onClick={() => handleResize(0.75)}>75%</button></li>
+                  <li><button onClick={() => handleResize(1)}>100%</button></li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li><button onClick={() => handleLayerChange('bringToFront')}>Bring to Front</button></li>
+                  <li><button onClick={() => handleLayerChange('sendToBack')}>Send to Back</button></li>
+                </ul>
+              </td>
+              <td>
+                <button className="reset-button" onClick={handleReset}>Reset</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   );

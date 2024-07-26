@@ -8,12 +8,33 @@
 .controls {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
   margin-top: 20px;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.controls table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.controls th,
+.controls td {
+  padding: 10px;
+  text-align: center;
+  vertical-align: top;
 }
 
 .control-section {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .control-section h2 {
@@ -27,6 +48,12 @@
 
 .control-section ul li {
   margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.control-section ul li input {
+  margin-right: 10px;
 }
 
 .control-section ul li button {
