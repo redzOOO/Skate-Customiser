@@ -67,12 +67,10 @@ const SkateDesignTool = () => {
   };
 
   const handleResize = (scale) => {
-    if (canvas) {
-      canvas.setZoom(scale);
-      canvas.setWidth(1000 * scale);
-      canvas.setHeight(800 * scale);
-      canvas.renderAll();
-    }
+    if (!canvas.getActiveObject()) return;
+    const activeObject = canvas.getActiveObject();
+    activeObject.scale(scale).setCoords();
+    canvas.renderAll();
   };
 
   const handleLayerChange = (action) => {
@@ -99,56 +97,35 @@ const SkateDesignTool = () => {
     <div className="skate-design-tool">
       <canvas ref={canvasRef}></canvas>
       <div className="controls">
-        <table>
-          <thead>
-            <tr>
-              <th>Boot</th>
-              <th>Frame</th>
-              <th>Wheels</th>
-              <th>Resize</th>
-              <th>Layers</th>
-              <th>Reset</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <ul>
-                  <li><input type="checkbox" onChange={() => handleBootChange(`${process.env.PUBLIC_URL}/images/USD Aeon Basic Team 60 Skates.png`)} />USD Aeon Basic Team White</li>
-                  <li><input type="checkbox" onChange={() => handleBootChange(`${process.env.PUBLIC_URL}/images/THEM SKATES X BACEMINT 909 Pink BOOT ONLY.png`)} />THEM Skates Bacethem</li>
-                  <li><input type="checkbox" onChange={() => handleBootChange(`${process.env.PUBLIC_URL}/images/Them-909-Skates-SHELL-ONLY-Black.png`)} />THEM Skates Black</li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li><input type="checkbox" onChange={() => handleFrameChange(`${process.env.PUBLIC_URL}/images/Oysi Medium Chassis Black.png`)} />Oysi Frame</li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li><input type="checkbox" onChange={() => handleWheelsChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`)} />Dead Wheels</li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li><button onClick={() => handleResize(0.25)}>25%</button></li>
-                  <li><button onClick={() => handleResize(0.5)}>50%</button></li>
-                  <li><button onClick={() => handleResize(0.75)}>75%</button></li>
-                  <li><button onClick={() => handleResize(1)}>100%</button></li>
-                </ul>
-              </td>
-              <td>
-                <ul>
-                  <li><button onClick={() => handleLayerChange('bringToFront')}>Bring to Front</button></li>
-                  <li><button onClick={() => handleLayerChange('sendToBack')}>Send to Back</button></li>
-                </ul>
-              </td>
-              <td>
-                <button className="reset-button" onClick={handleReset}>Reset</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="control-section">
+          <h2>Boot</h2>
+          <button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/USD Aeon Basic Team 60 Skates.png`)}>USD Aeon Basic Team White</button>
+          <button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/THEM SKATES X BACEMINT 909 Pink BOOT ONLY.png`)}>THEM Skates Bacethem</button>
+          <button onClick={() => handleBootChange(`${process.env.PUBLIC_URL}/images/Them-909-Skates-SHELL-ONLY-Black.png`)}>THEM Skates Black</button>
+        </div>
+        <div className="control-section">
+          <h2>Frame</h2>
+          <button onClick={() => handleFrameChange(`${process.env.PUBLIC_URL}/images/Oysi Medium Chassis Black.png`)}>Oysi Frame</button>
+        </div>
+        <div className="control-section">
+          <h2>Wheels</h2>
+          <button onClick={() => handleWheelsChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`)}>Dead Wheels</button>
+        </div>
+        <div className="control-section">
+          <h2>Resize</h2>
+          <button onClick={() => handleResize(0.25)}>25%</button>
+          <button onClick={() => handleResize(0.5)}>50%</button>
+          <button onClick={() => handleResize(0.75)}>75%</button>
+          <button onClick={() => handleResize(1)}>100%</button>
+        </div>
+        <div className="control-section">
+          <h2>Layers</h2>
+          <button onClick={() => handleLayerChange('bringToFront')}>Bring to Front</button>
+          <button onClick={() => handleLayerChange('sendToBack')}>Send to Back</button>
+        </div>
+        <div className="control-section">
+          <button className="reset-button" onClick={handleReset}>Reset</button>
+        </div>
       </div>
     </div>
   );

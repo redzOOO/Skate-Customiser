@@ -7,8 +7,7 @@
 
 .controls {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   flex-wrap: wrap;
   margin-top: 20px;
   background-color: #f0f0f0;
@@ -21,42 +20,17 @@
   z-index: 10;
 }
 
-.controls table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.controls th,
-.controls td {
-  padding: 10px;
-  text-align: center;
-  vertical-align: top;
-}
-
 .control-section {
-  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .control-section h2 {
   margin-bottom: 10px;
 }
 
-.control-section ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.control-section ul li {
-  margin-bottom: 5px;
-  display: flex;
-  align-items: center;
-}
-
-.control-section ul li input {
-  margin-right: 10px;
-}
-
-.control-section ul li button {
+.control-section button {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
@@ -64,9 +38,10 @@
   border-radius: 5px;
   background-color: #f9f9f9;
   transition: background-color 0.3s;
+  margin-bottom: 5px;
 }
 
-.control-section ul li button:hover {
+.control-section button:hover {
   background-color: #e9e9e9;
 }
 
