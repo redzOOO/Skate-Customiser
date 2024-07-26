@@ -6,9 +6,7 @@ import './SkateDesignTool.css';
 const SkateDesignTool = () => {
   const canvasRef = useRef(null);
   const [canvas, setCanvas] = useState(null);
-  const [bootImage, setBootImage] = useState(null);
-  const [frameImage, setFrameImage] = useState(null);
-  const [wheels, setWheels] = useState([]);
+  const [images, setImages] = useState([]);
   const [activeObject, setActiveObject] = useState(null);
   const [showControls, setShowControls] = useState(true);
 
@@ -30,52 +28,38 @@ const SkateDesignTool = () => {
     };
   }, []);
 
-  const loadImage = (url, setter, options = {}) => {
+  const loadImage = (url, name, options = {}) => {
     fabric.Image.fromURL(url, (img) => {
-      img.scale(0.7); // Scale image to 70%
       img.set({
-        left: canvas.width / 2 - img.getScaledWidth() / 2,
-        top: canvas.height / 2 - img.getScaledHeight() / 2,
+        left: canvas.width / 2 - img.width / 2,
+        top: canvas.height / 2 - img.height / 2,
         ...options,
+        name: name,
       });
-      setter(img);
       canvas.add(img);
       canvas.setActiveObject(img);
       setActiveObject(img);
+      setImages(prevImages => [...prevImages, { name, img }]);
       canvas.renderAll();
     });
   };
 
   const handleBootChange = (url) => {
-    if (bootImage) canvas.remove(bootImage);
-    loadImage(url, setBootImage);
+    loadImage(url, 'Boot');
   };
 
   const handleFrameChange = (url) => {
-    if (frameImage) canvas.remove(frameImage);
-    loadImage(url, setFrameImage);
+    loadImage(url, 'Frame');
   };
 
-  const handleWheelsChange = (url, count) => {
-    wheels.forEach(wheel => canvas.remove(wheel));
-    const wheelPositions = count === 1 ? 
-      [{ left: canvas.width / 2 - 20, top: 630 }] : 
-      [
-        { left: 180, top: 630 },
-        { left: 280, top: 630 },
-        { left: 380, top: 630 },
-        { left: 480, top: 630 },
-      ];
-    const newWheels = [];
-    wheelPositions.forEach((pos) => {
-      fabric.Image.fromURL(url, (img) => {
-        img.set({ ...pos, scaleX: 0.35, scaleY: 0.35 });
-        newWheels.push(img);
-        canvas.add(img);
-        canvas.renderAll();
-      });
-    });
-    setWheels(newWheels);
+  const handleWheelChange = (url) => {
+    const wheelPositions = [
+      { left: 180, top: 630 },
+      { left: 280, top: 630 },
+      { left: 380, top: 630 },
+      { left: 480, top: 630 },
+    ];
+    wheelPositions.forEach(pos => loadImage(url, 'Wheel', pos));
   };
 
   const handleResize = (scale) => {
@@ -100,15 +84,15 @@ const SkateDesignTool = () => {
     if (!canvas.getActiveObject()) return;
     const activeObject = canvas.getActiveObject();
     canvas.remove(activeObject);
+    setImages(images.filter(image => image.img !== activeObject));
     setActiveObject(null);
   };
 
   const handleReset = () => {
-    canvas.backgroundColor = 'white';
     canvas.clear();
-    setBootImage(null);
-    setFrameImage(null);
-    setWheels([]);
+    canvas.backgroundColor = 'white';
+    setImages([]);
+    setActiveObject(null);
     canvas.renderAll();
   };
 
@@ -129,10 +113,7 @@ const SkateDesignTool = () => {
           </div>
           <div className="control-section">
             <h3>Wheels</h3>
-            <div className="wheel-buttons">
-              <button onClick={() => handleWheelsChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`, 1)}>1 Wheel</button>
-              <button onClick={() => handleWheelsChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`, 4)}>4 Dead Wheels</button>
-            </div>
+            <button onClick={() => handleWheelChange(`${process.env.PUBLIC_URL}/images/Dead 56mm - 92A Wheels.png`)}>Add Dead Wheels</button>
           </div>
           <div className="control-section">
             <h3>Resize</h3>
@@ -143,7 +124,7 @@ const SkateDesignTool = () => {
           </div>
           <div className="control-section">
             <h3>Active Layer</h3>
-            <div>{activeObject ? activeObject.type : 'None'}</div>
+            <div>{activeObject ? activeObject.name : 'None'}</div>
             {activeObject && (
               <div className="layer-controls">
                 <button onClick={() => handleLayerChange('bringToFront')}>Bring to Front</button>
