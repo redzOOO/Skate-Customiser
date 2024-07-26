@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { fabric } from 'fabric';
 import './SkateDesignTool.css';
@@ -16,7 +15,10 @@ const SkateDesignTool = () => {
       width: 1000,
       backgroundColor: 'white',
     });
-    initCanvas.on('object:selected', () => {
+    initCanvas.on('selection:updated', () => {
+      setActiveObject(initCanvas.getActiveObject());
+    });
+    initCanvas.on('selection:created', () => {
       setActiveObject(initCanvas.getActiveObject());
     });
     initCanvas.on('selection:cleared', () => {
@@ -31,8 +33,10 @@ const SkateDesignTool = () => {
   const loadImage = (url, name, options = {}) => {
     fabric.Image.fromURL(url, (img) => {
       img.set({
-        left: canvas.width / 2 - img.width / 2,
-        top: canvas.height / 2 - img.height / 2,
+        left: canvas.width / 2,
+        top: canvas.height / 2,
+        originX: 'center',
+        originY: 'center',
         ...options,
         name: name,
       });
@@ -54,10 +58,10 @@ const SkateDesignTool = () => {
 
   const handleWheelChange = (url) => {
     const wheelPositions = [
-      { left: 180, top: 630 },
-      { left: 280, top: 630 },
-      { left: 380, top: 630 },
-      { left: 480, top: 630 },
+      { left: canvas.width / 2 - 220, top: 630 },
+      { left: canvas.width / 2 - 120, top: 630 },
+      { left: canvas.width / 2 - 20, top: 630 },
+      { left: canvas.width / 2 + 80, top: 630 },
     ];
     wheelPositions.forEach(pos => loadImage(url, 'Wheel', pos));
   };
